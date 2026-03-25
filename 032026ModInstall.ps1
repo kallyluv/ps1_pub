@@ -11,9 +11,9 @@ $Loader = "fabric"              # <-- CHANGE THIS (fabric / forge / quilt / neof
 $ApiBase = "https://api.modrinth.com"
 $MinecraftDir = Join-Path $env:APPDATA ".minecraft"
 $ModsDir = Join-Path $MinecraftDir "mods"
-$Desktop = [Environment]::GetFolderPath("Desktop")
+$Documents = [Environment]::GetFolderPath("MyDocuments")
 $Timestamp = Get-Date -Format "yyyy-MM-dd_HH-mm-ss"
-$LogFile = Join-Path $Desktop "$($PackName -replace '[^\w\- ]','')_InstallLog_$Timestamp.txt"
+$LogFile = Join-Path $Documents "$($PackName -replace '[^\w\- ]','')_InstallLog_$Timestamp.txt"
 
 # Track already processed projects (prevents duplicate shared dependency installs)
 $ProcessedProjects = New-Object 'System.Collections.Generic.HashSet[string]'
@@ -350,7 +350,7 @@ try {
     New-Item -ItemType File -Path $LogFile -Force | Out-Null
 }
 catch {
-    Write-Host "ERROR: Could not create log file on Desktop." -ForegroundColor Red
+    Write-Host "ERROR: Could not create log file in Documents folder." -ForegroundColor Red
     Pause
     exit 1
 }
@@ -417,6 +417,7 @@ foreach ($projectId in $projects) {
 Write-Log "Found $($projects.Count) mod(s) in collection." "Green"
 
 # User-friendly safety prompts
+Clear-Host
 Write-Section "Before We Install"
 
 $modsFileCount = @(Get-ChildItem -Path $ModsDir -File -ErrorAction SilentlyContinue).Count
@@ -445,6 +446,7 @@ if ($clearExisting) {
     }
 }
 
+Clear-Host
 Write-Section "Installing Mods"
 
 foreach ($projectId in $projects) {
@@ -454,6 +456,7 @@ foreach ($projectId in $projects) {
 # ==========================================================
 # SUMMARY
 # ==========================================================
+Clear-Host
 Write-Section "Install Summary"
 
 $depProcessed = $Stats.DepInstalled + $Stats.DepSkipped + $Stats.DepFailed
